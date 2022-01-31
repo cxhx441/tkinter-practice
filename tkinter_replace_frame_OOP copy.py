@@ -1,84 +1,28 @@
-import tkinter as tk
+class Parent(object): #This is a Borg class
+    __shared_state = {}
 
-
-class InputFrame(tk.Frame):
-    def __init__(self, container):
-        super().__init__(container)
-        # setup the grid layout manager
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(0, weight=3)
-
-        self.__create_widgets()
-
-    def __create_widgets(self):
-        # Find what
-        tk.Label(self, text='Find what:').grid(column=0, row=0, sticky=tk.W)
-        keyword = tk.Entry(self, width=30)
-        keyword.focus()
-        keyword.grid(column=1, row=0, sticky=tk.W)
-
-        # Replace with:
-        tk.Label(self, text='Replace with:').grid(column=0, row=1, sticky=tk.W)
-        replacement = tk.Entry(self, width=30)
-        replacement.grid(column=1, row=1, sticky=tk.W)
-
-        # Match Case checkbox
-        match_case = tk.StringVar()
-        match_case_check = tk.Checkbutton(self, text='Match case', variable=match_case, command=lambda: print(match_case.get()))
-        match_case_check.grid(column=0, row=2, sticky=tk.W)
-
-        # Wrap Around checkbox
-        wrap_around = tk.StringVar()
-        wrap_around_check = tk.Checkbutton(self, variable=wrap_around, text='Wrap around', command=lambda: print(wrap_around.get()))
-        wrap_around_check.grid(column=0, row=3, sticky=tk.W)
-
-        for widget in self.winfo_children():
-            widget.grid(padx=0, pady=5)
-
-
-class ButtonFrame(tk.Frame):
-    def __init__(self, container):
-        super().__init__(container)
-        # setup the grid layout manager
-        self.columnconfigure(0, weight=1)
-
-        self.__create_widgets()
-
-    def __create_widgets(self):
-        tk.Button(self, text='Find Next').grid(column=0, row=0)
-        tk.Button(self, text='Replace').grid(column=0, row=1)
-        tk.Button(self, text='Replace All').grid(column=0, row=2)
-        tk.Button(self, text='Cancel').grid(column=0, row=3)
-
-        for widget in self.winfo_children():
-            widget.grid(padx=0, pady=3)
-
-
-class App(tk.Tk):
     def __init__(self):
-        super().__init__()
-        self.title('Replace')
-        self.geometry('400x150')
-        self.resizable(0, 0)
-        # windows only (remove the minimize/maximize button)
-        self.attributes('-toolwindow', True)
-
-        # layout on the root window
-        self.columnconfigure(0, weight=4)
-        self.columnconfigure(1, weight=1)
-
-        self.__create_widgets()
-
-    def __create_widgets(self):
-        # create the input frame
-        input_frame = InputFrame(self)
-        input_frame.grid(column=0, row=0)
-
-        # create the button frame
-        button_frame = ButtonFrame(self)
-        button_frame.grid(column=1, row=0)
+        self.__dict__ = self.__shared_state
+        self.valueA = 5
 
 
-if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+class Child(Parent):
+    def __init__(self):
+        Parent.__init__(self)
+        self.valueB = 10
+
+    def Calculate(self):
+        self.result = self.valueB + self.valueA
+        print(self.result)
+
+
+class MainProgram():
+    def __init__(self):
+        self.parent = Parent()
+        self.child = Child()
+
+        self.parent.valueA = 8
+
+        self.child.Calculate()
+
+foobar=MainProgram()
